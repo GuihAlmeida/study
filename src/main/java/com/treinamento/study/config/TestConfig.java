@@ -1,8 +1,11 @@
 package com.treinamento.study.config;
 
+import com.treinamento.study.entities.Category;
 import com.treinamento.study.entities.Order;
 import com.treinamento.study.entities.Product;
 import com.treinamento.study.entities.User;
+import com.treinamento.study.enums.OrderStatus;
+import com.treinamento.study.repositories.CategoryRepository;
 import com.treinamento.study.repositories.OrderRepository;
 import com.treinamento.study.repositories.ProductRepository;
 import com.treinamento.study.repositories.UserRepository;
@@ -28,6 +31,9 @@ public class TestConfig  implements CommandLineRunner {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Override
     public void run(String... args) throws Exception {
 
@@ -41,11 +47,22 @@ public class TestConfig  implements CommandLineRunner {
 
         productRepository.saveAll(Arrays.asList(p1,p2));
 
-        Order o1 = new Order(null, Instant.parse("2026-10-20T19:53:07Z"), u1);
-        Order o2 = new Order(null, Instant.parse("2026-10-23T19:53:07Z"), u2);
-        Order o3 = new Order(null, Instant.parse("2026-10-01T19:53:07Z"), u1);
+        Order o1 = new Order(null, Instant.parse("2026-10-20T19:53:07Z"), OrderStatus.DELIVERED, u1);
+        Order o2 = new Order(null, Instant.parse("2026-10-23T19:53:07Z"),OrderStatus.CANCELED ,u2);
+        Order o3 = new Order(null, Instant.parse("2026-10-01T19:53:07Z"), OrderStatus.WAITNG_PAYMENT, u1);
 
         orderRepository.saveAll(Arrays.asList(o1,o2,o3));
 
+        Category c1 = new Category(null,"Açougue");
+        Category c2 = new Category(null,"limpeza");
+        Category c3 = new Category(null,"outros");
+
+        categoryRepository.saveAll(Arrays.asList(c1,c2,c3));
+
+        p1.getCategories().add(c2);
+        p2.getCategories().add(c1);
+        p2.getCategories().add(c2);
+
+        productRepository.saveAll(Arrays.asList(p1,p2));
     }
 }
